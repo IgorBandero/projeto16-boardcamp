@@ -49,9 +49,9 @@ export async function getCustomersById(req, res){
     try{
         const customersList = await db.query(`SELECT * FROM customers WHERE id = $1;`, [id]);
         if (customersList.rows.length === 0){
-            res.sendStatus(404);
+            return res.sendStatus(404);
         }
-        res.send(gamesList.rows[0]);
+        res.status(200).send(gamesList.rows[0]);
     }catch(error){
         res.status(500).send(error.message);
     }
@@ -69,6 +69,21 @@ export async function registerCustomer(req, res){
         res.sendStatus(201);
     }catch(error){
         console.log(error.message);
+        res.status(500).send(error.message);
+    }
+}
+
+//#####################################################################################
+
+export async function updateCustomer(req, res){
+
+    const { id } = req.params;
+    const { name, phone, cpf, birthday } = req.body;
+
+    try{
+        await db.query(`UPDATE customers SET (name = $1, phone = $2, cpf = $3, birthday = $4) WHERE id = $5;`, [name, phone, cpf, birthday, id]);
+        res.sendStatus(200);
+    }catch(error){
         res.status(500).send(error.message);
     }
 }
