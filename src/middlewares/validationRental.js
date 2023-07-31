@@ -64,7 +64,7 @@ export async function checkRental(req, res, next){
         if (rental.rows.length === 0){
             return res.sendStatus(404);
         }
-        if (rental.rows[0].returnDate !== null){
+        if (rental.rows[0].returnDate){
             res.sendStatus(400);
         }
         next();        
