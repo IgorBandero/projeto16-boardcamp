@@ -7,7 +7,7 @@ import { validationSchema } from "../middlewares/validationSchema.js";
 import { gameSchema } from "../schemas/gameSchema.js";
 import { customerSchema } from "../schemas/customerSchema.js";
 import { rentalSchema } from "../schemas/rentalSchema.js";
-import { checkCostumer, checkGame, checkStock, checkRental } from "../middlewares/validationRental.js";
+import { checkCostumer, checkGame, checkStock, checkRental, checkRentalDelete } from "../middlewares/validationRental.js";
 
 const router = Router();
 
@@ -20,6 +20,6 @@ router.put("/customers/:id", validationSchema(customerSchema), checkRepeatedUpda
 router.get("/rentals", getRentals);
 router.post("/rentals", validationSchema(rentalSchema), checkCostumer, checkGame, checkStock, registerRental);
 router.post("/rentals/:id/return", checkRental, returnGame);
-router.delete("/rentals/:id", checkRental, deleteRental);
+router.delete("/rentals/:id", checkRentalDelete, deleteRental);
 
 export default router;
