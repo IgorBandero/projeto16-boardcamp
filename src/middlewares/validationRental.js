@@ -84,7 +84,7 @@ export async function checkRentalDelete(req, res, next){
         if (rental.rows.length === 0){
             return res.sendStatus(404);
         }
-        if (rental.rows[0].returnDate){
+        if (rental.rows[0].returnDate === null){
             res.sendStatus(400);
         }
         next();        
