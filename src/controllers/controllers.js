@@ -105,8 +105,38 @@ export async function updateCustomer(req, res){
 export async function getRentals (req, res){
     
     try{
-        const rentalsList = await db.query(`SELECT * FROM rentals;`);
-        res.send(rentalsList.rows);
+        const rentalsList = await db.query(`SELECT rentals.*, games.name AS "gameName", customers.name AS "customerName" FROM rentals
+                                            JOIN customers ON rentals."customerId" = customers.id
+                                            JOIN games ON rentals."gameId" = games.id;`);
+
+        const rentalsComplete = rentalsList.rows.map((rental) => {
+
+            rental.rentDate = format(new Date(rental.rentDate), 'yyyy-MM-dd');
+
+            const rentalFinal = {
+
+                ...rental,
+
+                customer: {
+                    id: rental.customerId,
+                    name: rental.customerName
+                },
+
+                game: {
+                    id: rental.gameId,
+                    name: rental.gameName
+                }
+                
+            }
+
+            delete rentalFinal.customerName;
+            delete rentalFinal.gameName;
+
+            return rentalFinal;
+
+        });   
+
+        res.send(rentalsComplete);
     }catch(error){
         res.status(500).send(error.message);
     }
@@ -124,7 +154,6 @@ export async function registerRental(req, res){
         const game = gameFound.rows[0];
         const pricePerDay = game.pricePerDay;
         const stockAvailable = game.stockTotal - 1;
-        console.log(stockAvailable);
 
         const rentDate = dayjs().format('YYYY-MM-DD');
         const originalPrice = pricePerDay * daysRented;
