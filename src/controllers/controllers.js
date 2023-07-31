@@ -51,7 +51,7 @@ export async function getCustomersById(req, res){
         if (customersList.rows.length === 0){
             return res.sendStatus(404);
         }
-        res.status(200).send(gamesList.rows[0]);
+        res.status(200).send(customersList.rows[0]);
     }catch(error){
         res.status(500).send(error.message);
     }
