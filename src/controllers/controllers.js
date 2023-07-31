@@ -192,9 +192,7 @@ export async function returnGame(req, res){
         // Alterar a delayFee
         const delayFee = delayDays * game.rows[0].pricePerDay;
 
-        if (delayFee > 0){
-            await db.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE id = $3;`, [today, delayFee, id]);
-        }
+        await db.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE id = $3;`, [today, delayFee, id]);
         
         res.status(200).send(rental.rows);
 
