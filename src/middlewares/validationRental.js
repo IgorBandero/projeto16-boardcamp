@@ -27,8 +27,24 @@ export async function checkGame(req, res, next){
         if (game.rows.length === 0){
             return res.status(400).send("Jogo não existe!");
         }
-        if (game.rows[0].stockTotal === 0){
-            res.status(400).send("Jogo esgotado para aluguel!");
+        next();
+        
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+} 
+
+//#####################################################################################
+
+export async function checkStock(req, res, next){
+
+    const { gameId } = req.body;
+
+    try {
+        const game = await db.query(`SELECT * FROM games WHERE id=$1;`, [gameId]);
+        const gameStock = await db.query(`SELECT * FROM rentals WHERE "gameId" = $1 AND "returnDate" IS NULL;`, [gameId]);
+        if (gameStock.rows.length >= game.rows[0].stockTotal){
+            return res.status(400).send("Jogo sem estoque para aluguel!");
         }
         next();
         
@@ -37,4 +53,4 @@ export async function checkGame(req, res, next){
     }
 } 
 
-export default { checkCostumer, checkGame };
+export default { checkCostumer, checkGame, checkStock };
