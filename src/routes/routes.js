@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getGames, registerGame, getCustomers, getCustomersById, registerCustomer, updateCustomer, 
-        getRentals, registerRental, returnGame } from "../controllers/controllers.js";
+        getRentals, registerRental, returnGame, deleteRental } from "../controllers/controllers.js";
 import { checkRepeatedGame } from "../middlewares/validationGame.js";
 import { checkRepeatedCostumer, checkRepeatedUpdatedCostumer } from "../middlewares/validationCustomer.js";
 import { validationSchema } from "../middlewares/validationSchema.js";
@@ -20,5 +20,6 @@ router.put("/customers/:id", validationSchema(customerSchema), checkRepeatedUpda
 router.get("/rentals", getRentals);
 router.post("/rentals", validationSchema(rentalSchema), checkCostumer, checkGame, checkStock, registerRental);
 router.post("/rentals/:id/return", checkRental, returnGame);
+router.delete("/rentals/:id", checkRental, deleteRental);
 
 export default router;

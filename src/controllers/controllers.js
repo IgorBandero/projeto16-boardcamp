@@ -201,3 +201,19 @@ export async function returnGame(req, res){
         res.status(500).send(error.message);
     }
 }
+
+//#####################################################################################
+
+export async function deleteRental(req, res){
+
+    const { id } = req.params;
+
+    try {
+        await db.query(`DELETE FROM rentals WHERE id = $1;`, [id]);
+        res.sendStatus(200);
+    }
+    catch(error){
+        res.status(500).send(error.message);
+    }   
+
+}
