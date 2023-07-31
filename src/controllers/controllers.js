@@ -187,7 +187,7 @@ export async function returnGame(req, res){
        
         const today = dayjs().format('YYYY-MM-DD');
 
-        const delayDays = dayjs().diff(dayjs(rental.rows[0].rentDate), 'days');
+        const delayDays = (dayjs().diff(dayjs(rental.rows[0].rentDate), 'days') - rental.rows[0].daysRented);
 
         // Alterar a delayFee
         const delayFee = delayDays * game.rows[0].pricePerDay;
