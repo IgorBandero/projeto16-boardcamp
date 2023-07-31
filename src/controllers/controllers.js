@@ -126,7 +126,7 @@ export async function getRentals (req, res){
                     id: rental.gameId,
                     name: rental.gameName
                 }
-                
+
             }
 
             delete rentalFinal.customerName;
@@ -169,6 +169,33 @@ export async function registerRental(req, res){
         }    
 
         res.sendStatus(201);
+    }catch(error){
+        console.log(error.message);
+        res.status(500).send(error.message);
+    }
+}
+
+//#####################################################################################
+
+export async function returnGame(req, res){
+    
+    const { id } = req.params; 
+
+    try{
+        const rental = await db.query('SELECT * FROM rentals WHERE "id" = $1;', [id]);
+        const game = await db.query('SELECT * FROM games WHERE "id" = $1;', [rental.rows[0].gameId]);
+       
+        const today = dayjs().format('YYYY-MM-DD');
+
+        const delayDays = dayjs().diff(dayjs(rental.rows[0].rentDate), 'days');
+
+        // Alterar a delayFee
+        const delayFee = delayDays * game.rows[0].pricePerDay;
+
+        await db.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE id = $3;`, [today, delayFee, id]);
+        
+        res.status(200).send(rental.rows);
+
     }catch(error){
         console.log(error.message);
         res.status(500).send(error.message);

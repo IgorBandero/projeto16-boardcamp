@@ -53,4 +53,24 @@ export async function checkStock(req, res, next){
     }
 } 
 
-export default { checkCostumer, checkGame, checkStock };
+//#####################################################################################
+
+export async function checkRental(req, res, next){
+
+    const { id } = req.params;
+
+    try {
+        const rental = await db.query(`SELECT * FROM rentals WHERE id=$1;`, [id]);
+        if (rental.rows.length === 0){
+            return res.sendStatus(404);
+        }
+        if (rental.rows[0].returnDate !== null){
+            res.sendStatus(400);
+        }
+        next();        
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+} 
+
+export default { checkCostumer, checkGame, checkStock, checkRental };
