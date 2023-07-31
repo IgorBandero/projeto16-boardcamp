@@ -87,3 +87,15 @@ export async function updateCustomer(req, res){
         res.status(500).send(error.message);
     }
 }
+
+//#####################################################################################
+
+export async function getRentals (req, res){
+    
+    try{
+        const rentalsList = await db.query(`SELECT * FROM rentals;`);
+        res.send(rentalsList.rows);
+    }catch(error){
+        res.status(500).send(error.message);
+    }
+}
