@@ -114,18 +114,34 @@ export async function getRentals (req, res){
 
 //#####################################################################################
 
-/*
-export async function registerRent(req, res){
+
+export async function registerRental(req, res){
     
-    const { customerId, gameId, daysRented } = req.body;  
+    const { customerId, gameId, daysRented } = req.body; 
 
     try{
-        await db.query(`INSERT INTO customers ("name", "phone", "cpf", "birthday") 
-        VALUES ($1, $2, $3, $4);`, [name, phone, cpf, birthday]);
+        const gameFound = await db.query('SELECT * FROM games WHERE "id" = $1;', [gameId]);
+        const game = gameFound.rows[0];
+        const pricePerDay = game.pricePerDay;
+        const stockAvailable = game.stockTotal - 1;
+        console.log(stockAvailable);
+
+        const rentDate = dayjs().format('YYYY-MM-DD');
+        const originalPrice = pricePerDay * daysRented;
+
+        if (stockAvailable >= 0){
+            await db.query(`INSERT INTO rentals ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee") 
+            VALUES ($1, $2, $3, $4, null, $5, null);`, [customerId, gameId, rentDate, daysRented, originalPrice]);        
+        
+            await db.query(`UPDATE games SET name = $1, image = $2, "stockTotal" = $3, "pricePerDay" = $4 WHERE id = $5;`, [game.name, game.image, stockAvailable, game.pricePerDay, game.id]);
+        }    
+        else {
+            return res.sendStatus(400);
+        }    
+
         res.sendStatus(201);
     }catch(error){
         console.log(error.message);
         res.status(500).send(error.message);
     }
 }
-*/
