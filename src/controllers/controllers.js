@@ -28,3 +28,14 @@ export async function registerGame(req, res){
     }
 }
 
+//#####################################################################################
+
+export async function getCustomers(req, res){
+
+    try{
+        const customersList = await db.query(`SELECT * FROM customers;`);
+        res.send(gamesList.rows);
+    }catch(error){
+        res.status(500).send(error.message);
+    }
+}
